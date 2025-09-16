@@ -3,34 +3,34 @@ package lexical;
 import util.TokenType;
 
 public class Token {
-	private TokenType type;
-	private String text;
-	
-	public Token(TokenType type, String text) {
-		super();
-		this.type = type;
-		this.text = text;
-	}
+    private TokenType type;
+    private String text;
 
-	public TokenType getType() {
-		return type;
-	}
+    public Token(TokenType type, String text) {
+        super();
+        this.type = type;
+        this.text = text;
+    }
 
-	public void setType(TokenType type) {
-		this.type = type;
-	}
+    public TokenType getType() {
+        return type;
+    }
 
-	public String getText() {
-		return text;
-	}
+    public void setType(TokenType type) {
+        this.type = type;
+    }
 
-	public void setText(String text) {
-		this.text = text;
-	}
+    public String getText() {
+        return text;
+    }
 
-	@Override
-	public String toString() {
-		return "Token [type=" + type + ", text=" + text + "]";
-	}
-	
+    public void setText(String text) {
+        this.text = text;
+    }
+
+    @Override
+    public String toString() {
+        return "Token [type=" + type + ", text='" + text + "']";
+    }
+
 }
