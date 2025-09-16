@@ -33,7 +33,8 @@ public class Scanner {
                 return null;
             }
             currentChar = nextChar();
-            System.out.println("DEBUG: Leu o caractere: " + currentChar + " | Estado atual: " + state);
+            System.out.println("DEBUG: Estado atual: " + state + " | Leu o caractere: " + currentChar);
+
             switch (state) {
                 case 0:
                     if (isWhitespace(currentChar)) {
@@ -50,12 +51,20 @@ public class Scanner {
                         System.out.println("DEBUG: Transição para o estado 3 (NUMBER)");
                     } else if (isMathOperator(currentChar)) {
                         content += currentChar;
-                        state = 5;
-                        System.out.println("DEBUG: Transição para o estado 5 (MATH_OPERATOR)");
+                        System.out.println("DEBUG: Transição para o estado 5 desnecessária(MATH_OPERATOR)");
+                        return new Token(TokenType.MATH_OPERATOR, content);
                     } else if (isRelOperator(currentChar)) {
                         content += currentChar;
                         state = 6;
                         System.out.println("DEBUG: Transição para o estado 6 (REL_OPERATOR)");
+                    } else if (isParenthesis(currentChar)) {
+                        content += currentChar;
+                        if (currentChar == '(') {
+                            System.out.println("DEBUG: Retornando TOKEN: PARÊNTESIS ESQUERDO | Valor: " + content);
+                        } else {
+                            System.out.println("DEBUG: Retornando TOKEN: PARÊNTESIS DIREITO | Valor: " + content);
+                        }
+                        return new Token(TokenType.PARENTHESIS, content);
                     } else {
                         System.out.println("DEBUG: Caractere inválido: " + currentChar);
 
@@ -68,11 +77,14 @@ public class Scanner {
                         System.out.println("DEBUG: CONTINUA NO ESTADO 1 (IDENTIFIER)");
                     } else if (isMathOperator(currentChar)) {
                         back();
-                        state = 2;
-                        System.out.println("DEBUG: leu operador matemático, retornando para finalizar IDENTIFIER)");
+                        System.out.println("DEBUG: Retornando TOKEN: IDENTIFIER | Valor: " + content);
+                        return new Token(TokenType.IDENTIFIER, content);
+//
                     } else {
-                        state = 2;
-                        System.out.println("DEBUG: Transição para o estado 2 (FINALIZA IDENTIFIER)");
+                        back();
+                        System.out.println("DEBUG: Retornando TOKEN: IDENTIFIER | Valor: " + content);
+                        return new Token(TokenType.IDENTIFIER, content);
+//
                     }
                     break;
                 case 2:
@@ -84,32 +96,31 @@ public class Scanner {
                         content += currentChar;
                         state = 3;
                     } else {
-                        state = 4;
-                        System.out.println("DEBUG: Transição para o estado 4 (FINALIZA NUMBER)");
+                        back();
+                        System.out.println("DEBUG: Transição para o estado 4 desnecessária(FINALIZA NUMBER)");
+                        return new Token(TokenType.NUMBER, content);
                     }
                     break;
-                case 4:
-                    back();
-                    return new Token(TokenType.NUMBER, content);
-                case 5:
-                    back();
-                    return new Token(TokenType.MATH_OPERATOR, content); //tratar esse erro
                 case 6:
-//                    if (currentChar == '=') {
-//                        content += currentChar;
-//                        return new Token(TokenType.REL_OPERATOR, content);
-//                    } else {
-//                        back();
-//                        if (content.equals("=")) {
-//                            return new Token(TokenType.ASSIGNMENT, content);
-//                        } else {
-//                            return new Token(TokenType.REL_OPERATOR, content);
-//                        }
-//
-//                    }
-                    if (currentChar == '>') {
-    
+                    if (currentChar == '=') {
+                        content += currentChar;
+                        return new Token(TokenType.REL_OPERATOR, content); //é ==
+                    } else {
+                        back();
+                        if (content.equals("=")) {
+                            return new Token(TokenType.ASSIGNMENT, content);
+                        } else {
+                            return new Token(TokenType.REL_OPERATOR, content);
+                        }
                     }
+                case 7:
+                    back();
+                    if (currentChar == '(') {
+                        System.out.println("DEBUG: Retornando TOKEN: PARÊNTESIS ESQUERDO | Valor: " + content);
+                    } else {
+                        System.out.println("DEBUG: Retornando TOKEN: PARÊNTESIS DIREITO | Valor: " + content);
+                    }
+                    return new Token(TokenType.PARENTHESIS, content);
             }
         }
     }
@@ -136,6 +147,10 @@ public class Scanner {
 
     private boolean isRelOperator(char c) {
         return c == '>' || c == '<' || c == '=' || c == '!';
+    }
+
+    private boolean isParenthesis(char c) {
+        return c == '(' || c == ')';
     }
 
     private char nextChar() {
