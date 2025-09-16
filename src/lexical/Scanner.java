@@ -55,8 +55,8 @@ public class Scanner {
                         return new Token(TokenType.MATH_OPERATOR, content);
                     } else if (isRelOperator(currentChar)) {
                         content += currentChar;
-                        state = 6;
-                        System.out.println("DEBUG: Transição para o estado 6 (REL_OPERATOR)");
+                        state = 5;
+                        System.out.println("DEBUG: Transição para o estado 5 (REL_OPERATOR)");
                     } else if (isParenthesis(currentChar)) {
                         content += currentChar;
                         if (currentChar == '(') {
@@ -92,7 +92,11 @@ public class Scanner {
                     System.out.println("DEBUG: Retornando TOKEN: IDENTIFIER | Valor: " + content);
                     return new Token(TokenType.IDENTIFIER, content);
                 case 3:
-                    if (isDigit(currentChar)) {
+                    if (isPoint(currentChar)) {
+                        content += currentChar;
+                        state = 6;
+                        System.out.println("DEBUG: ENCONTREI UM PONTO | Valor: " + currentChar);
+                    } else if (isDigit(currentChar)) {
                         content += currentChar;
                         state = 3;
                     } else {
@@ -101,7 +105,7 @@ public class Scanner {
                         return new Token(TokenType.NUMBER, content);
                     }
                     break;
-                case 6:
+                case 5:
                     if (currentChar == '=') {
                         content += currentChar;
                         return new Token(TokenType.REL_OPERATOR, content); //é ==
@@ -113,14 +117,21 @@ public class Scanner {
                             return new Token(TokenType.REL_OPERATOR, content);
                         }
                     }
-                case 7:
-                    back();
-                    if (currentChar == '(') {
-                        System.out.println("DEBUG: Retornando TOKEN: PARÊNTESIS ESQUERDO | Valor: " + content);
+                case 6:
+                    if (isDigit(currentChar)) {
+                        content += currentChar;
+                        state = 6;
+                    } else if (isPoint(currentChar)) {
+                        content += currentChar;
+                        System.out.println("DEBUG: não pode haver dois pontos! | Leu o caractere: " + currentChar + " | Valor atual: " + content);
+                        return null; // Erro léxico
                     } else {
-                        System.out.println("DEBUG: Retornando TOKEN: PARÊNTESIS DIREITO | Valor: " + content);
+                        back();
+                        System.out.println("DEBUG: Retornando TOKEN: NUMBER decimal | Valor: " + content);
+                        return new Token(TokenType.NUMBER, content);
                     }
-                    return new Token(TokenType.PARENTHESIS, content);
+                    break;
+
             }
         }
     }
@@ -152,6 +163,11 @@ public class Scanner {
     private boolean isParenthesis(char c) {
         return c == '(' || c == ')';
     }
+
+    private boolean isPoint(char c) {
+        return c == '.';
+    }
+
 
     private char nextChar() {
         return sourceCode[pos++];
