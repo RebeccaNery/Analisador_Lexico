@@ -93,10 +93,6 @@ public class Scanner {
                         content += currentChar;
                         state = 1;
                         System.out.println("DEBUG: CONTINUA NO ESTADO 1 (IDENTIFIER)");
-                    } else if (isMathOperator(currentChar)) {
-                        back();
-                        System.out.println("DEBUG: Retornando TOKEN: IDENTIFIER | Valor: " + content);
-                        return new Token(TokenType.IDENTIFIER, content);
                     } else {
                         back();
                         TokenType finalType = reservedWords.getOrDefault(content, TokenType.IDENTIFIER);
@@ -142,10 +138,6 @@ public class Scanner {
                         content += currentChar;
                         System.out.println("DEBUG: não pode haver dois pontos! | Leu o caractere: " + currentChar + " | Valor atual: " + content);
                         return null; // Erro léxico
-                    } else if (isWhitespace(currentChar)) {
-                        content += currentChar;
-                        System.out.println("DEBUG: número decimal inválido! | Leu o caractere: " + currentChar + " | Valor atual: " + content);
-                        return null; // Erro léxico
                     } else {
                         back();
                         System.out.println("DEBUG: Retornando TOKEN: NUMBER decimal | Valor: " + content);
@@ -161,8 +153,9 @@ public class Scanner {
                         back();
                         return new Token(TokenType.MATH_OPERATOR, content);
                     }
+                    break;
                 case 8:
-                    if (currentChar == '\n' || currentChar == '\r' || currentChar == '\t') {
+                    if (currentChar == '\n' || currentChar == '\r') {
                         back();
                         System.out.println("DEBUG: Fim do comentário de uma linha! | Valor: " + content);
                         return new Token(TokenType.ONE_LINE_COMMENT, content);
@@ -171,6 +164,7 @@ public class Scanner {
                         content += currentChar;
                         System.out.println("DEBUG: Duas barras ==> comentário de uma linha! | Valor: " + content);
                     }
+                    break;
 
             }//switch
         }
