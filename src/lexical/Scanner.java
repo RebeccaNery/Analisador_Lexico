@@ -149,6 +149,10 @@ public class Scanner {
                         content += currentChar;
                         state = 8;
                         System.out.println("DEBUG: Duas barras ==> início do comentário de uma linha | Valor: " + content);
+                    } else if (isAsterisk(currentChar)) {
+                        content += currentChar;
+                        System.out.println("DEBUG: Barra seguida de asterisco ==> comentário multilinha --> Indo para o Estado 9 | Valor: " + content);
+                        state = 9;
                     } else {
                         back();
                         return new Token(TokenType.MATH_OPERATOR, content);
@@ -165,7 +169,28 @@ public class Scanner {
                         System.out.println("DEBUG: Duas barras ==> comentário de uma linha! | Valor: " + content);
                     }
                     break;
-
+                case 9:
+                    if (currentChar == '*') {
+                        content += currentChar;
+                        state = 10;
+                        System.out.println("Encontrei um ASTERISCO --> Indo para o estado 10 | Valor: " + content);
+                    } else {
+                        state = 9;
+                        content += currentChar;
+                        System.out.println("DEBUG: Estado 9 | Dentro do comentário multilinha! | Valor: " + content);
+                    }
+                    break;
+                case 10:
+                    if (currentChar == '/') {
+                        content += currentChar;
+                        System.out.println("DEBUG: Fim do comentário multilinha! | Valor: " + content);
+                        return new Token(TokenType.MULTI_LINE_COMMENT, content);
+                    } else {
+                        state = 9;
+                        content += currentChar;
+                        System.out.println("DEBUG: Estado 10 -> voltando pro Estado 9 | Dentro do comentário multilinha! | Valor: " + content);
+                    }
+                    break;
             }//switch
         }
     }
@@ -205,6 +230,10 @@ public class Scanner {
 
     private boolean isBar(char c) {
         return (c == '/');
+    }
+
+    private boolean isAsterisk(char c) {
+        return (c == '*');
     }
 
     private char nextChar() {
