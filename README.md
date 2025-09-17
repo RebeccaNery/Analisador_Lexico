@@ -1,87 +1,71 @@
-# mini_compiler  
+🔍 Analisador Léxico em Java
+Um analisador léxico simples e funcional para uma mini-linguagem, desenvolvido como projeto para a disciplina de Compiladores.
 
-## Descrição  
-O **mini_compiler** é um projeto acadêmico em **Java** voltado para a disciplina de **Construção de Compiladores I**.  
-Este módulo corresponde ao **Checkpoint 01: Analisador Léxico** e tem como objetivo implementar e estender um analisador léxico simples para reconhecer identificadores, números, operadores, palavras reservadas, parênteses e comentários, além de tratar erros léxicos.  
+📜 Sobre o Projeto
+Este projeto implementa a primeira fase de um compilador: a Análise Léxica. O programa lê um arquivo de código-fonte de uma linguagem hipotética e o converte em uma sequência de tokens, que podem ser utilizados pela próxima fase, a análise sintática.
 
-O projeto é parte de um compilador em desenvolvimento incremental e **possui peso 2 na primeira nota da disciplina**.  
+O analisador foi construído em Java puro, utilizando o conceito de uma Máquina de Estados Finitos para reconhecer os diferentes padrões (lexemas) da linguagem.
 
----
+✨ Funcionalidades
+O analisador é capaz de reconhecer:
 
-## Estrutura do Projeto  
+✅ Palavras Reservadas: if, else, int, float, print
 
-```mini_compiler/
-│
-├── src/
-│ ├── lexical/
-│ │ ├── Scanner.java # Implementação do analisador léxico
-│ │ └── Token.java # Estrutura de dados para representar tokens
-│ │
-│ ├── mini_compiler/
-│ │ └── Main.java # Classe principal para execução do compilador
-│ │
-│ └── util/
-│ └── TokenType.java # Enumeração com os tipos de tokens reconhecidos
-│
-└── README.md # Documentação do projeto
-```
+✅ Identificadores: Nomes de variáveis como soma, valor, x1
 
----
+✅ Números: Inteiros (10) e decimais (3.14)
 
-## Requisitos  
+✅ Operadores:
 
-- **Java 11+** (recomendado: OpenJDK 17 ou superior)  
-- IDE ou editor de texto de sua preferência (IntelliJ, VS Code, Eclipse, etc.)  
+Matemáticos (+, -, *, /)
 
----
+Relacionais (>, <, ==, !=, >=, <=)
 
-## Compilação e Execução  
+Atribuição (=)
 
-Dentro da pasta `src`, compile os arquivos:  
+✅ Símbolos: Parênteses ((, ))
 
-```
-javac mini_compiler/Main.java
-```
+✅ Comentários: Ignora comentários de uma linha (// ...)
 
-E execute o programa:
+✅ Espaços em Branco: Ignora espaços, tabulações e quebras de linha.
 
-```
-java mini_compiler.Main
-```
+🚀 Como Executar
+Pré-requisitos
+Java Development Kit (JDK) - Versão 11 ou superior.
 
-O arquivo de entrada pode ser configurado dentro da classe Main.java ou passado como argumento (dependendo da sua implementação).
+Passos
+Clone o repositório:
 
+Bash
 
-## Exemplos de Uso
+git clone https://github.com/seu-usuario/seu-repositorio.git
+cd seu-repositorio
+Crie um arquivo de teste:
+Crie um arquivo chamado programa.txt na raiz do projeto com o código que você deseja analisar. Por exemplo:
 
-Entrada de teste (programa.mc):
+Java
 
-```c
-int x = 10;
-float y = 3.14;
-/* comentário de múltiplas linhas */
-if (x >= y) {
-    print(x);
+// Exemplo de código
+int a = 10
+float b = 20.5
+if (a > b) {
+    print a
 }
-```
+Compile o projeto:
+(Assumindo que seus arquivos .java estão em uma pasta src)
 
-## Saída esperada (tokens):
+Bash
 
-```
-[INT, IDENT(x), ASSIGN, NUMBER(10), SEMICOLON]
-[FLOAT, IDENT(y), ASSIGN, NUMBER(3.14), SEMICOLON]
-[IF, LPAREN, IDENT(x), GTE, IDENT(y), RPAREN, LBRACE]
-[PRINT, LPAREN, IDENT(x), RPAREN, SEMICOLON]
-[RBRACE]
-```
-## Contribuição
+javac -d out src/**/*.java
+Execute o analisador:
+(Assumindo que sua classe principal é mini_compiler.Main)
 
-Este projeto é desenvolvido no contexto da disciplina. Sugestões e melhorias podem ser feitas via Merge Requests ou discutidas em sala de aula.
+Bash
 
-## Licença
+java -cp out mini_compiler.Main programa.txt
+O programa irá imprimir a sequência de tokens encontrados no arquivo.
 
-Uso acadêmico restrito à disciplina de Construção de Compiladores I.
+💻 Tecnologias Utilizadas
+Java
 
-## Status
-
-Atualmente em desenvolvimento no módulo de Analisador Léxico. Próximos módulos incluirão Analisador Sintático e Analisador Semântico.
+Feito com ❤️ por [Rebecca Nery].
