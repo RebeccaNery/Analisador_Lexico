@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
 
 import util.TokenType;
 
@@ -11,6 +13,18 @@ public class Scanner {
     private int state;
     private char[] sourceCode;
     private int pos;
+
+    // >>> TABELA DE PALAVRAS RESERVADAS <<<
+    private static final Map<String, TokenType> reservedWords;
+
+    static {
+        reservedWords = new HashMap<>();
+        reservedWords.put("int", TokenType.RESERVED_WORD);
+        reservedWords.put("float", TokenType.RESERVED_WORD);
+        reservedWords.put("print", TokenType.RESERVED_WORD);
+        reservedWords.put("if", TokenType.RESERVED_WORD);
+        reservedWords.put("else", TokenType.RESERVED_WORD);
+    }
 
     public Scanner(String filename) {
         try {
@@ -51,8 +65,8 @@ public class Scanner {
                         System.out.println("DEBUG: Transição para o estado 3 (NUMBER)");
                     } else if (isMathOperator(currentChar)) {
                         content += currentChar;
-                        System.out.println("DEBUG: Transição para o estado 5 desnecessária(MATH_OPERATOR)");
-                        return new Token(TokenType.MATH_OPERATOR, content);
+                        state = 7;
+                        System.out.println("DEBUG: Transição para o estado 7(COMENTARIO DE UMA LINHA)");
                     } else if (isRelOperator(currentChar)) {
                         content += currentChar;
                         state = 5;
@@ -65,6 +79,10 @@ public class Scanner {
                             System.out.println("DEBUG: Retornando TOKEN: PARÊNTESIS DIREITO | Valor: " + content);
                         }
                         return new Token(TokenType.PARENTHESIS, content);
+                    } else if (isPoint(currentChar)) {
+                        content += currentChar;
+                        state = 6;
+                        System.out.println("DEBUG: ENCONTREI UM PONTO | Valor: " + currentChar);
                     } else {
                         System.out.println("DEBUG: Caractere inválido: " + currentChar);
 
@@ -79,12 +97,11 @@ public class Scanner {
                         back();
                         System.out.println("DEBUG: Retornando TOKEN: IDENTIFIER | Valor: " + content);
                         return new Token(TokenType.IDENTIFIER, content);
-//
                     } else {
                         back();
-                        System.out.println("DEBUG: Retornando TOKEN: IDENTIFIER | Valor: " + content);
-                        return new Token(TokenType.IDENTIFIER, content);
-//
+                        TokenType finalType = reservedWords.getOrDefault(content, TokenType.IDENTIFIER);
+                        System.out.println("DEBUG: Retornando TOKEN:" + finalType + " | Valor: " + content);
+                        return new Token(finalType, content);
                     }
                     break;
                 case 2:
@@ -125,16 +142,40 @@ public class Scanner {
                         content += currentChar;
                         System.out.println("DEBUG: não pode haver dois pontos! | Leu o caractere: " + currentChar + " | Valor atual: " + content);
                         return null; // Erro léxico
+                    } else if (isWhitespace(currentChar)) {
+                        content += currentChar;
+                        System.out.println("DEBUG: número decimal inválido! | Leu o caractere: " + currentChar + " | Valor atual: " + content);
+                        return null; // Erro léxico
                     } else {
                         back();
                         System.out.println("DEBUG: Retornando TOKEN: NUMBER decimal | Valor: " + content);
                         return new Token(TokenType.NUMBER, content);
                     }
                     break;
+                case 7:
+                    if (isBar(currentChar)) {
+                        content += currentChar;
+                        state = 8;
+                        System.out.println("DEBUG: Duas barras ==> início do comentário de uma linha | Valor: " + content);
+                    } else {
+                        back();
+                        return new Token(TokenType.MATH_OPERATOR, content);
+                    }
+                case 8:
+                    if (currentChar == '\n' || currentChar == '\r' || currentChar == '\t') {
+                        back();
+                        System.out.println("DEBUG: Fim do comentário de uma linha! | Valor: " + content);
+                        return new Token(TokenType.ONE_LINE_COMMENT, content);
+                    } else {
+                        state = 8;
+                        content += currentChar;
+                        System.out.println("DEBUG: Duas barras ==> comentário de uma linha! | Valor: " + content);
+                    }
 
-            }
+            }//switch
         }
     }
+
 
     private boolean isWhitespace(char c) {
         return (c == ' ' || c == '\t' || c == '\n' || c == '\r');
@@ -168,6 +209,9 @@ public class Scanner {
         return c == '.';
     }
 
+    private boolean isBar(char c) {
+        return (c == '/');
+    }
 
     private char nextChar() {
         return sourceCode[pos++];
