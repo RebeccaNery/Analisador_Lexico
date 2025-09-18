@@ -13,6 +13,8 @@ public class Scanner {
     private int state;
     private char[] sourceCode;
     private int pos;
+    private int line;
+    private int column;
 
     // >>> TABELA DE PALAVRAS RESERVADAS <<<
     private static final Map<String, TokenType> reservedWords;
@@ -31,6 +33,8 @@ public class Scanner {
             String content = new String(Files.readAllBytes(Paths.get(filename)), StandardCharsets.UTF_8);
             sourceCode = content.toCharArray();
             pos = 0;
+            line = 1;
+            column = 1;
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -43,9 +47,14 @@ public class Scanner {
         System.out.println("\n--- Chamando nextToken() ---");
 
         while (true) {
+
+            int errorLine = line;
+            int errorColumn = column;
+
             if (isEoF()) {
                 return null;
             }
+
             currentChar = nextChar();
             System.out.println("DEBUG: Estado atual: " + state + " | Leu o caractere: " + currentChar);
 
@@ -85,7 +94,11 @@ public class Scanner {
                         System.out.println("DEBUG: ENCONTREI UM PONTO | Valor: " + currentChar);
                     } else {
                         System.out.println("DEBUG: Caractere inválido: " + currentChar);
-
+                        String errorMessage = String.format(
+                                "Lexical Error on line %d, column %d: Invalid character '%c'",
+                                errorLine, errorColumn, currentChar
+                        );
+                        throw new RuntimeException(errorMessage);
                     }
                     break;
                 case 1:
@@ -114,7 +127,6 @@ public class Scanner {
                         state = 3;
                     } else {
                         back();
-                        System.out.println("DEBUG: Transição para o estado 4 desnecessária(FINALIZA NUMBER)");
                         return new Token(TokenType.NUMBER, content);
                     }
                     break;
@@ -137,7 +149,11 @@ public class Scanner {
                     } else if (isPoint(currentChar)) {
                         content += currentChar;
                         System.out.println("DEBUG: não pode haver dois pontos! | Leu o caractere: " + currentChar + " | Valor atual: " + content);
-                        return null; // Erro léxico
+                        String errorMessage = String.format(
+                                "Lexical Error on line %d, column %d: Invalid character '%c'",
+                                errorLine, errorColumn, currentChar
+                        );
+                        throw new RuntimeException(errorMessage);
                     } else {
                         back();
                         System.out.println("DEBUG: Retornando TOKEN: NUMBER decimal | Valor: " + content);
@@ -237,15 +253,51 @@ public class Scanner {
     }
 
     private char nextChar() {
-        return sourceCode[pos++];
+        if (isEoF()) {
+            System.out.println("DEBUG: Fim do arquivo alcançado.");
+            return '\0';
+        }
+        char currentChar = sourceCode[pos];
+
+        if (currentChar == '\n') {
+            line++;
+            column = 1;
+        } else {
+            column++;
+        }
+        pos++;
+        return currentChar;
     }
 
     private void back() {
+        if (pos <= 0) {
+            return;
+        }
+
         pos--;
+        if (sourceCode[pos] == '\n') {
+            line--;
+            int tempPos = -1;
+            for (int i = pos - 1; i >= 0; i--) {
+                if (sourceCode[i] == '\n') {
+                    tempPos = i;
+                    break;
+                }
+
+            }
+            column = pos - tempPos;
+        } else {
+            column--;
+        }
     }
 
     private boolean isEoF() {
         return pos >= sourceCode.length;
     }
+
+    private boolean isInvalidChar(char c) {
+        return (c == '@' || c == '#' || c == '$' || c == '%' || c == '^' || c == '&' || c == '~' || c == '`' || c == '\\' || c == '|' || c == ';' || c == ':' || c == '"' || c == '\'');
+    }
+
 
 }
