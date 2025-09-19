@@ -144,7 +144,6 @@ public class Scanner {
                         if (currentChar != '\0') {
                             back();
                         }
-
                         return new Token(TokenType.NUMBER, content);
                     }
                     break;
@@ -174,11 +173,16 @@ public class Scanner {
                                 errorLine, errorColumn, currentChar
                         );
                         throw new RuntimeException(errorMessage);
+                    } else if (isWhitespace(currentChar) || currentChar == '\0') {
+                        content += currentChar;
+                        System.out.println("DEBUG: Número decimal escrito incorretamente. " + currentChar + " | Valor atual: " + content);
+                        String errorMessage = String.format(
+                                "Lexical Error on line %d, column %d: Invalid character '%c'",
+                                errorLine, errorColumn, currentChar
+                        );
+                        throw new RuntimeException(errorMessage);
                     } else {
-                        if (currentChar != '\0') {
-                            back();
-                        }
-
+                        back();
                         System.out.println("DEBUG: Retornando TOKEN: NUMBER decimal | Valor: " + content);
                         return new Token(TokenType.NUMBER, content);
                     }
