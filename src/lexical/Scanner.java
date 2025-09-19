@@ -68,7 +68,7 @@ public class Scanner {
                     if (currentChar == '\0') {
                         return null; // Finaliza a análise
                     }
-                    if (isLetter(currentChar)) {
+                    if (isLetter(currentChar) || isUnderline(currentChar)) {
                         content += currentChar;
                         state = 1;
                         System.out.println("DEBUG: Transição para o estado 1 (IDENTIFIER)");
@@ -76,10 +76,15 @@ public class Scanner {
                         content += currentChar;
                         state = 3;
                         System.out.println("DEBUG: Transição para o estado 3 (NUMBER)");
-                    } else if (isMathOperator(currentChar)) {
+                    } else if (isBar(currentChar)) {
                         content += currentChar;
                         state = 7;
                         System.out.println("DEBUG: Transição para o estado 7 (COMENTARIO DE UMA LINHA)");
+                    } else if (isMathOperator(currentChar)) {
+                        content += currentChar;
+//                        state = 7;
+//                        System.out.println("DEBUG: Transição para o estado 7 (COMENTARIO DE UMA LINHA)");
+                        return new Token(TokenType.MATH_OPERATOR, content);
                     } else if (isRelOperator(currentChar)) {
                         content += currentChar;
                         state = 5;
@@ -95,7 +100,7 @@ public class Scanner {
                     } else if (isPoint(currentChar)) {
                         content += currentChar;
                         state = 6;
-                        System.out.println("DEBUG: ENCONTREI UM PONTO | Valor: " + currentChar);
+                        System.out.println("DEBUG: Encontrei um ponto! | Valor: " + currentChar);
                     } else {
                         System.out.println("DEBUG: Caractere inválido: " + currentChar);
                         String errorMessage = String.format(
@@ -109,7 +114,7 @@ public class Scanner {
                     if (isLetter(currentChar) || isDigit(currentChar) || isUnderline(currentChar)) {
                         content += currentChar;
                         state = 1;
-                        System.out.println("DEBUG: CONTINUA NO ESTADO 1 (IDENTIFIER)");
+                        System.out.println("DEBUG: Continua no Estado 1 (IDENTIFIER)");
                     } else {
                         if (currentChar != '\0') {
                             back();
