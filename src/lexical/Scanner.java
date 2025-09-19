@@ -51,9 +51,10 @@ public class Scanner {
             int errorLine = line;
             int errorColumn = column;
 
-            if (isEoF()) {
-                return null;
-            }
+//            if (isEoF()) {
+//                System.out.println("DEBUG: Fim do arquivo alcançado. Retornando null.");
+//                return null;
+//            }
 
             currentChar = nextChar();
             System.out.println("DEBUG: Estado atual: " + state + " | Leu o caractere: " + currentChar);
@@ -63,6 +64,9 @@ public class Scanner {
                     if (isWhitespace(currentChar)) {
                         System.out.println("DEBUG: Caractere é whitespace. Ignorando.");
                         continue;
+                    }
+                    if (currentChar == '\0') {
+                        return null; // Finaliza a análise
                     }
                     if (isLetter(currentChar)) {
                         content += currentChar;
@@ -75,7 +79,7 @@ public class Scanner {
                     } else if (isMathOperator(currentChar)) {
                         content += currentChar;
                         state = 7;
-                        System.out.println("DEBUG: Transição para o estado 7(COMENTARIO DE UMA LINHA)");
+                        System.out.println("DEBUG: Transição para o estado 7 (COMENTARIO DE UMA LINHA)");
                     } else if (isRelOperator(currentChar)) {
                         content += currentChar;
                         state = 5;
@@ -107,13 +111,19 @@ public class Scanner {
                         state = 1;
                         System.out.println("DEBUG: CONTINUA NO ESTADO 1 (IDENTIFIER)");
                     } else {
-                        back();
+                        if (currentChar != '\0') {
+                            back();
+                        }
+
                         TokenType finalType = reservedWords.getOrDefault(content, TokenType.IDENTIFIER);
                         System.out.println("DEBUG: Retornando TOKEN:" + finalType + " | Valor: " + content);
                         return new Token(finalType, content);
                     }
                     break;
                 case 2:
+                    if (currentChar != '\0') {
+                        back();
+                    }
                     back();
                     System.out.println("DEBUG: Retornando TOKEN: IDENTIFIER | Valor: " + content);
                     return new Token(TokenType.IDENTIFIER, content);
@@ -126,7 +136,10 @@ public class Scanner {
                         content += currentChar;
                         state = 3;
                     } else {
-                        back();
+                        if (currentChar != '\0') {
+                            back();
+                        }
+
                         return new Token(TokenType.NUMBER, content);
                     }
                     break;
@@ -135,7 +148,9 @@ public class Scanner {
                         content += currentChar;
                         return new Token(TokenType.REL_OPERATOR, content); //é ==
                     } else {
-                        back();
+                        if (currentChar != '\0') {
+                            back();
+                        }
                         if (content.equals("=")) {
                             return new Token(TokenType.ASSIGNMENT, content);
                         } else {
@@ -155,7 +170,10 @@ public class Scanner {
                         );
                         throw new RuntimeException(errorMessage);
                     } else {
-                        back();
+                        if (currentChar != '\0') {
+                            back();
+                        }
+
                         System.out.println("DEBUG: Retornando TOKEN: NUMBER decimal | Valor: " + content);
                         return new Token(TokenType.NUMBER, content);
                     }
@@ -170,15 +188,19 @@ public class Scanner {
                         System.out.println("DEBUG: Barra seguida de asterisco ==> comentário multilinha --> Indo para o Estado 9 | Valor: " + content);
                         state = 9;
                     } else {
-                        back();
+                        if (currentChar != '\0') {
+                            back();
+                        }
+
                         return new Token(TokenType.MATH_OPERATOR, content);
                     }
                     break;
                 case 8:
                     if (currentChar == '\n' || currentChar == '\r') {
-                        back();
                         System.out.println("DEBUG: Fim do comentário de uma linha! | Valor: " + content);
-                        return new Token(TokenType.ONE_LINE_COMMENT, content);
+                        state = 0;
+                        content = "";
+                        continue;
                     } else {
                         state = 8;
                         content += currentChar;
@@ -254,7 +276,7 @@ public class Scanner {
 
     private char nextChar() {
         if (isEoF()) {
-            System.out.println("DEBUG: Fim do arquivo alcançado.");
+            System.out.println("DEBUG: Fim do arquivo alcançado. Retornando '\\0'.");
             return '\0';
         }
         char currentChar = sourceCode[pos];
