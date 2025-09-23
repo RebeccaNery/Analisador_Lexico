@@ -191,6 +191,10 @@ public class Scanner {
                     }
                     break;
                 case 8:
+                    if (currentChar == '\0') {
+                        System.out.println("DEBUG: Fim do comentário de uma linha! | Valor: " + content);
+                        return null;
+                    }
                     if (currentChar == '\n' || currentChar == '\r') {
                         System.out.println("DEBUG: Fim do comentário de uma linha! | Valor: " + content);
                         state = 0;
@@ -203,6 +207,13 @@ public class Scanner {
                     }
                     break;
                 case 9:
+                    if (currentChar == '\0') {
+                        String errorMessage = String.format(
+                                "Lexical Error on line %d, column %d: Unterminated multi-line comment",
+                                errorLine, errorColumn
+                        );
+                        throw new RuntimeException(errorMessage);
+                    }
                     if (currentChar == '*') {
                         content += currentChar;
                         state = 10;
@@ -214,10 +225,19 @@ public class Scanner {
                     }
                     break;
                 case 10:
+                    if (currentChar == '\0') {
+                        String errorMessage = String.format(
+                                "Lexical Error on line %d, column %d: Unterminated multi-line comment",
+                                errorLine, errorColumn
+                        );
+                        throw new RuntimeException(errorMessage);
+                    }
                     if (currentChar == '/') {
                         content += currentChar;
                         System.out.println("DEBUG: Fim do comentário multilinha! | Valor: " + content);
-                        return new Token(TokenType.MULTI_LINE_COMMENT, content);
+                        state = 0;
+                        content = "";
+                        continue;
                     } else {
                         state = 9;
                         content += currentChar;
