@@ -51,11 +51,6 @@ public class Scanner {
             int errorLine = line;
             int errorColumn = column;
 
-//            if (isEoF()) {
-//                System.out.println("DEBUG: Fim do arquivo alcançado. Retornando null.");
-//                return null;
-//            }
-
             currentChar = nextChar();
             System.out.println("DEBUG: Estado atual: " + state + " | Leu o caractere: " + currentChar);
 
@@ -66,7 +61,7 @@ public class Scanner {
                         continue;
                     }
                     if (currentChar == '\0') {
-                        return null; // Finaliza a análise
+                        return null;
                     }
                     if (isLetter(currentChar) || isUnderline(currentChar)) {
                         content += currentChar;
@@ -79,13 +74,11 @@ public class Scanner {
                     } else if (isBar(currentChar)) {
                         content += currentChar;
                         state = 7;
-                        System.out.println("DEBUG: Transição para o estado 7 (COMENTARIO DE UMA LINHA)");
-                    } else if (isMathOperator(currentChar)) {
+                        System.out.println("DEBUG: Transição para o estado 7 (COMENTARIO DE UMA LINHA, MULTILINHA OU MATH_OPERATOR)");
+                    } else if (isMathOperator(currentChar)) { //se entrou nesse else if, é porque não é barra, então automaticamente é um operador matemático MATH_OPERATOR
                         content += currentChar;
-//                        state = 7;
-//                        System.out.println("DEBUG: Transição para o estado 7 (COMENTARIO DE UMA LINHA)");
                         return new Token(TokenType.MATH_OPERATOR, content);
-                    } else if (isRelOperator(currentChar)) {
+                    } else if (isRelOperator(currentChar)) { //pode ser >, <, = ou !
                         content += currentChar;
                         state = 5;
                         System.out.println("DEBUG: Transição para o estado 5 (REL_OPERATOR)");
@@ -97,10 +90,10 @@ public class Scanner {
                             System.out.println("DEBUG: Retornando TOKEN: PARÊNTESIS DIREITO | Valor: " + content);
                         }
                         return new Token(TokenType.PARENTHESIS, content);
-                    } else if (isPoint(currentChar)) {
+                    } else if (isPoint(currentChar)) { // verifica os casos de número decimal tipo .950 ou .48 (que é aceito), mas vai pro estado 6 verificar se é um decimal mesmo ou só um ponto aleatório
                         content += currentChar;
                         state = 6;
-                        System.out.println("DEBUG: Encontrei um ponto! | Valor: " + currentChar);
+                        System.out.println("DEBUG: Encontrei um ponto! Transição para o estado 6 | Valor: " + currentChar);
                     } else {
                         System.out.println("DEBUG: Caractere inválido: " + currentChar);
                         String errorMessage = String.format(
@@ -110,7 +103,7 @@ public class Scanner {
                         throw new RuntimeException(errorMessage);
                     }
                     break;
-                case 1:
+                case 1: //IDENTIFIER
                     if (isLetter(currentChar) || isDigit(currentChar) || isUnderline(currentChar)) {
                         content += currentChar;
                         state = 1;
@@ -119,19 +112,11 @@ public class Scanner {
                         if (currentChar != '\0') {
                             back();
                         }
-
                         TokenType finalType = reservedWords.getOrDefault(content, TokenType.IDENTIFIER);
                         System.out.println("DEBUG: Retornando TOKEN:" + finalType + " | Valor: " + content);
                         return new Token(finalType, content);
                     }
                     break;
-                case 2:
-                    if (currentChar != '\0') {
-                        back();
-                    }
-                    back();
-                    System.out.println("DEBUG: Retornando TOKEN: IDENTIFIER | Valor: " + content);
-                    return new Token(TokenType.IDENTIFIER, content);
                 case 3:
                     if (isPoint(currentChar)) {
                         content += currentChar;
