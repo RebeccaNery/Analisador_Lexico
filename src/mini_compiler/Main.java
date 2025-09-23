@@ -6,8 +6,8 @@ import lexical.Token;
 /*
 GRUPO:
 * Anita Alves Donato
-* Ana Beatriz
-* Ruan Vitor
+* Ana Beatriz Cavalcanti
+* Ruan Vitor Silva
 * Rebecca Nery
 */
 

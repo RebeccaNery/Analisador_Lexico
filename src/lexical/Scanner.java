@@ -117,7 +117,7 @@ public class Scanner {
                         return new Token(finalType, content);
                     }
                     break;
-                case 3:
+                case 3: //NUMBER
                     if (isPoint(currentChar)) {
                         content += currentChar;
                         state = 6;
@@ -132,7 +132,7 @@ public class Scanner {
                         return new Token(TokenType.NUMBER, content);
                     }
                     break;
-                case 5:
+                case 5: //REL_OPERATOR ou ASSIGNMENT
                     if (currentChar == '=') {
                         content += currentChar;
                         return new Token(TokenType.REL_OPERATOR, content); //é ==
@@ -146,7 +146,7 @@ public class Scanner {
                             return new Token(TokenType.REL_OPERATOR, content);
                         }
                     }
-                case 6:
+                case 6: // NUMBER - número decimal
                     if (isDigit(currentChar)) {
                         content += currentChar;
                         state = 6;
@@ -158,16 +158,27 @@ public class Scanner {
                                 errorLine, errorColumn, currentChar
                         );
                         throw new RuntimeException(errorMessage);
-                    } else if (isWhitespace(currentChar) || currentChar == '\0') {
-                        content += currentChar;
-                        System.out.println("DEBUG: Número decimal escrito incorretamente. " + currentChar + " | Valor atual: " + content);
-                        String errorMessage = String.format(
-                                "Lexical Error on line %d, column %d: Invalid character '%c'",
-                                errorLine, errorColumn, currentChar
-                        );
-                        throw new RuntimeException(errorMessage);
-                    } else {
-                        back();
+                    }
+//                    else if (isWhitespace(currentChar) || currentChar == '\0') {
+//                        content += currentChar;
+//                        System.out.println("DEBUG: Número decimal escrito incorretamente. " + currentChar + " | Valor atual: " + content);
+//                        String errorMessage = String.format(
+//                                "Lexical Error on line %d, column %d: Invalid character '%c'",
+//                                errorLine, errorColumn, currentChar
+//                        );
+//                        throw new RuntimeException(errorMessage);
+//                    }
+                    else {
+                        if (content.endsWith(".")) {
+                            String errorMessage = String.format(
+                                    "Lexical Error on line %d, column %d: Number cannot end with a decimal point '%s'",
+                                    errorLine, errorColumn, content
+                            );
+                            throw new RuntimeException(errorMessage);
+                        }
+                        if (currentChar != '\0') {
+                            back();
+                        }
                         System.out.println("DEBUG: Retornando TOKEN: NUMBER decimal | Valor: " + content);
                         return new Token(TokenType.NUMBER, content);
                     }
