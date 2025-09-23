@@ -158,17 +158,7 @@ public class Scanner {
                                 errorLine, errorColumn, currentChar
                         );
                         throw new RuntimeException(errorMessage);
-                    }
-//                    else if (isWhitespace(currentChar) || currentChar == '\0') {
-//                        content += currentChar;
-//                        System.out.println("DEBUG: Número decimal escrito incorretamente. " + currentChar + " | Valor atual: " + content);
-//                        String errorMessage = String.format(
-//                                "Lexical Error on line %d, column %d: Invalid character '%c'",
-//                                errorLine, errorColumn, currentChar
-//                        );
-//                        throw new RuntimeException(errorMessage);
-//                    }
-                    else {
+                    } else {
                         if (content.endsWith(".")) {
                             String errorMessage = String.format(
                                     "Lexical Error on line %d, column %d: Number cannot end with a decimal point '%s'",
