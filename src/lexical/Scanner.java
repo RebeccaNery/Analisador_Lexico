@@ -69,19 +69,19 @@ public class Scanner {
                         System.out.println("DEBUG: Transição para o estado 1 (IDENTIFIER)");
                     } else if (isDigit(currentChar)) {
                         content += currentChar;
-                        state = 3;
-                        System.out.println("DEBUG: Transição para o estado 3 (NUMBER)");
+                        state = 2;
+                        System.out.println("DEBUG: Transição para o estado 2 (NUMBER)");
                     } else if (isBar(currentChar)) {
                         content += currentChar;
-                        state = 7;
-                        System.out.println("DEBUG: Transição para o estado 7 (COMENTARIO DE UMA LINHA, MULTILINHA OU MATH_OPERATOR)");
+                        state = 5;
+                        System.out.println("DEBUG: Transição para o estado 5 (COMENTARIO DE UMA LINHA, MULTILINHA OU MATH_OPERATOR)");
                     } else if (isMathOperator(currentChar)) { //se entrou nesse else if, é porque não é barra, então automaticamente é um operador matemático MATH_OPERATOR
                         content += currentChar;
                         return new Token(TokenType.MATH_OPERATOR, content);
                     } else if (isRelOperator(currentChar)) { //pode ser >, <, = ou !
                         content += currentChar;
-                        state = 5;
-                        System.out.println("DEBUG: Transição para o estado 5 (REL_OPERATOR)");
+                        state = 4;
+                        System.out.println("DEBUG: Transição para o estado 4 (REL_OPERATOR)");
                     } else if (isParenthesis(currentChar)) {
                         content += currentChar;
                         if (currentChar == '(') {
@@ -90,10 +90,10 @@ public class Scanner {
                             System.out.println("DEBUG: Retornando TOKEN: PARÊNTESIS DIREITO | Valor: " + content);
                         }
                         return new Token(TokenType.PARENTHESIS, content);
-                    } else if (isPoint(currentChar)) { // verifica os casos de número decimal tipo .950 ou .48 (que é aceito), mas vai pro estado 6 verificar se é um decimal mesmo ou só um ponto aleatório
+                    } else if (isPoint(currentChar)) { // verifica os casos de número decimal tipo .950 ou .48 (que é aceito), mas vai pro estado 3 verificar se é um decimal mesmo ou só um ponto aleatório
                         content += currentChar;
-                        state = 6;
-                        System.out.println("DEBUG: Encontrei um ponto! Transição para o estado 6 | Valor: " + currentChar);
+                        state = 3;
+                        System.out.println("DEBUG: Encontrei um ponto! Transição para o estado 3 | Valor: " + currentChar);
                     } else {
                         System.out.println("DEBUG: Caractere inválido: " + currentChar);
                         String errorMessage = String.format(
@@ -117,14 +117,14 @@ public class Scanner {
                         return new Token(finalType, content);
                     }
                     break;
-                case 3: //NUMBER
+                case 2: //NUMBER
                     if (isPoint(currentChar)) {
                         content += currentChar;
-                        state = 6;
+                        state = 3;
                         System.out.println("DEBUG: ENCONTREI UM PONTO | Valor: " + currentChar);
                     } else if (isDigit(currentChar)) {
                         content += currentChar;
-                        state = 3;
+                        state = 2;
                     } else {
                         if (currentChar != '\0') {
                             back();
@@ -132,24 +132,11 @@ public class Scanner {
                         return new Token(TokenType.NUMBER, content);
                     }
                     break;
-                case 5: //REL_OPERATOR ou ASSIGNMENT
-                    if (currentChar == '=') {
-                        content += currentChar;
-                        return new Token(TokenType.REL_OPERATOR, content); //é ==, >=, <=, !=
-                    } else {
-                        if (currentChar != '\0') {
-                            back();
-                        }
-                        if (content.equals("=")) {
-                            return new Token(TokenType.ASSIGNMENT, content);
-                        } else {
-                            return new Token(TokenType.REL_OPERATOR, content);
-                        }
-                    }
-                case 6: // NUMBER - número decimal
+
+                case 3: // NUMBER - número decimal
                     if (isDigit(currentChar)) {
                         content += currentChar;
-                        state = 6;
+                        state = 3;
                     } else if (isPoint(currentChar)) {
                         content += currentChar;
                         System.out.println("DEBUG: não pode haver dois pontos! | Leu o caractere: " + currentChar + " | Valor atual: " + content);
@@ -173,15 +160,29 @@ public class Scanner {
                         return new Token(TokenType.NUMBER, content);
                     }
                     break;
-                case 7:
+                case 4: //REL_OPERATOR ou ASSIGNMENT
+                    if (currentChar == '=') {
+                        content += currentChar;
+                        return new Token(TokenType.REL_OPERATOR, content); //é ==, >=, <=, !=
+                    } else {
+                        if (currentChar != '\0') {
+                            back();
+                        }
+                        if (content.equals("=")) {
+                            return new Token(TokenType.ASSIGNMENT, content);
+                        } else {
+                            return new Token(TokenType.REL_OPERATOR, content);
+                        }
+                    }
+                case 5:
                     if (isBar(currentChar)) {
                         content += currentChar;
-                        state = 8;
+                        state = 6;
                         System.out.println("DEBUG: Duas barras ==> início do comentário de uma linha | Valor: " + content);
                     } else if (isAsterisk(currentChar)) {
                         content += currentChar;
                         System.out.println("DEBUG: Barra seguida de asterisco ==> comentário multilinha --> Indo para o Estado 9 | Valor: " + content);
-                        state = 9;
+                        state = 7;
                     } else {
                         if (currentChar != '\0') {
                             back();
@@ -190,7 +191,7 @@ public class Scanner {
                         return new Token(TokenType.MATH_OPERATOR, content);
                     }
                     break;
-                case 8:
+                case 6:
                     if (currentChar == '\0') {
                         System.out.println("DEBUG: Fim do comentário de uma linha! | Valor: " + content);
                         return null;
@@ -201,12 +202,12 @@ public class Scanner {
                         content = "";
                         continue;
                     } else {
-                        state = 8;
+                        state = 6;
                         content += currentChar;
                         System.out.println("DEBUG: Duas barras ==> comentário de uma linha! | Valor: " + content);
                     }
                     break;
-                case 9:
+                case 7:
                     if (currentChar == '\0') {
                         String errorMessage = String.format(
                                 "Lexical Error on line %d, column %d: Unterminated multi-line comment",
@@ -216,15 +217,15 @@ public class Scanner {
                     }
                     if (currentChar == '*') {
                         content += currentChar;
-                        state = 10;
-                        System.out.println("Encontrei um ASTERISCO --> Indo para o estado 10 | Valor: " + content);
+                        state = 8;
+                        System.out.println("Encontrei um ASTERISCO --> Indo para o estado 8 | Valor: " + content);
                     } else {
-                        state = 9;
+                        state = 7;
                         content += currentChar;
-                        System.out.println("DEBUG: Estado 9 | Dentro do comentário multilinha! | Valor: " + content);
+                        System.out.println("DEBUG: Estado 7 | Dentro do comentário multilinha! | Valor: " + content);
                     }
                     break;
-                case 10:
+                case 8:
                     if (currentChar == '\0') {
                         String errorMessage = String.format(
                                 "Lexical Error on line %d, column %d: Unterminated multi-line comment",
@@ -239,9 +240,9 @@ public class Scanner {
                         content = "";
                         continue;
                     } else {
-                        state = 9;
+                        state = 7;
                         content += currentChar;
-                        System.out.println("DEBUG: Estado 10 -> voltando pro Estado 9 | Dentro do comentário multilinha! | Valor: " + content);
+                        System.out.println("DEBUG: Estado 8 -> voltando pro Estado 7 | Dentro do comentário multilinha! | Valor: " + content);
                     }
                     break;
             }//switch
