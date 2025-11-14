@@ -135,7 +135,7 @@ public class Scanner {
                 case 5: //REL_OPERATOR ou ASSIGNMENT
                     if (currentChar == '=') {
                         content += currentChar;
-                        return new Token(TokenType.REL_OPERATOR, content); //é ==
+                        return new Token(TokenType.REL_OPERATOR, content); //é ==, >=, <=, !=
                     } else {
                         if (currentChar != '\0') {
                             back();
