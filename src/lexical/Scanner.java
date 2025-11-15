@@ -86,10 +86,12 @@ public class Scanner {
                         content += currentChar;
                         if (currentChar == '(') {
                             System.out.println("DEBUG: Retornando TOKEN: PARÊNTESIS ESQUERDO | Valor: " + content);
+                            return new Token(TokenType.LEFT_PARENTHESIS, content);
                         } else {
                             System.out.println("DEBUG: Retornando TOKEN: PARÊNTESIS DIREITO | Valor: " + content);
+                            return new Token(TokenType.RIGHT_PARENTHESIS, content);
                         }
-                        return new Token(TokenType.PARENTHESIS, content);
+
                     } else if (isPoint(currentChar)) { // verifica os casos de número decimal tipo .950 ou .48 (que é aceito), mas vai pro estado 3 verificar se é um decimal mesmo ou só um ponto aleatório
                         content += currentChar;
                         state = 3;
