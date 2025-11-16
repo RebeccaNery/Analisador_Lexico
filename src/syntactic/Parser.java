@@ -98,6 +98,19 @@ public class Parser {
             }
         }
     }
+    public void condicional() throws SyntacticException{
+        if(token !=null) {
+            if (token.getType() == TokenType.RESERVED_WORD_IF) {
+                token = scanner.nextToken();
+                expressaoRelacional();
+                bloco();
+                condicional_();
+
+            }
+        }
+    }
+
+
 
     public void mutavel() {
         if (token != null) {
