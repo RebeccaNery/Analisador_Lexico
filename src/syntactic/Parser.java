@@ -101,6 +101,9 @@ public class Parser {
         }
     }
 
+
+
+
     public void mutavel() {
         if (token != null) {
             if (token.getType() == TokenType.RESERVED_WORD_MUT) {
