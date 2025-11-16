@@ -331,7 +331,7 @@ public class Scanner {
 
     private char nextChar() {
         if (isEoF()) {
-            System.out.println("DEBUG: Fim do arquivo alcançado. Retornando '\\0'.");
+            //System.out.println("DEBUG: Fim do arquivo alcançado. Retornando '\\0'.");
             return '\0';
         }
         char currentChar = sourceCode[pos];

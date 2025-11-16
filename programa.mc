@@ -1,1 +1,3 @@
-fn main () { let mut n:}
+fn main () { let mut n:i32;
+let mut multiplos:i32;
+let mut contador:f64;}

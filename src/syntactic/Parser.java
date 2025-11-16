@@ -117,10 +117,13 @@ public class Parser {
         }
     }
 
-    public void mutavel() {
+    public void mutavel() throws SyntacticException {
         if (token != null) {
             if (token.getType() == TokenType.RESERVED_WORD_MUT) {
                 token = scanner.nextToken();
+            } else {
+                throw new SyntacticException("Expected 'mut', found " + token.getType() + "(" + token.getText() + ")");
+
             }
         }
     }
