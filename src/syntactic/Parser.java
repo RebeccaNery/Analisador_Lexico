@@ -65,15 +65,15 @@ public class Parser {
         if (token.getType() == TokenType.RESERVED_WORD_LET) {
             declaracao();
         } else if (token.getType() == TokenType.IDENTIFIER) {
-            atribuicao();
+            //atribuicao();
         } else if (token.getType() == TokenType.RESERVED_WORD_READ) {
-            leitura();
+            //leitura();
         } else if (token.getType() == TokenType.RESERVED_WORD_PRINT) {
-            escrita();
+            //escrita();
         } else if (token.getType() == TokenType.RESERVED_WORD_IF) {
-            condicional();
+            //condicional();
         } else if (token.getType() == TokenType.RESERVED_WORD_WHILE) {
-            repeticao();
+            //repeticao();
         } else if (token.getType() == TokenType.LEFT_BRACE) {
             bloco();
         }
