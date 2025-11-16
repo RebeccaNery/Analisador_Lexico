@@ -113,6 +113,11 @@ public class Scanner {
 
                     } else if (currentChar == '}') {
                         return new Token(TokenType.RIGHT_BRACE, content);
+                    } else if (currentChar == '!') {
+                        return new Token(TokenType.EXCLAMATION, content);
+                    } else if (currentChar == '"') {
+                        content += currentChar;
+                        state = 9;
                     } else {
                         //System.out.println("DEBUG: Caractere inválido: " + currentChar);
                         String errorMessage = String.format(
@@ -262,6 +267,21 @@ public class Scanner {
                         state = 7;
                         content += currentChar;
                         //System.out.println("DEBUG: Estado 8 -> voltando pro Estado 7 | Dentro do comentário multilinha! | Valor: " + content);
+                    }
+                    break;
+                case 9:
+                    if (currentChar == '"') {
+                        content += currentChar;
+                        return new Token(TokenType.STRING, content);
+                    } else if (currentChar == '\0') {
+                        String errorMessage = String.format(
+                                "Lexical Error on line %d, column %d: Unclosed string",
+                                errorLine, errorColumn
+                        );
+                        throw new RuntimeException(errorMessage);
+                    } else {
+                        content += currentChar;
+                        state = 9;
                     }
                     break;
             }//switch

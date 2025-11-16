@@ -1,1 +1,1 @@
-fn main () { read (n) }
+fn main () { let mut n:}

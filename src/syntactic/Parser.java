@@ -43,7 +43,6 @@ public class Parser {
         if (token.getType() == TokenType.LEFT_BRACE) {
             token = scanner.nextToken();
             listaComandos();
-            // ** ADICIONE ESTA VERIFICAÇÃO **
             if (token == null || token.getType() != TokenType.RIGHT_BRACE) {
                 // Se token é null (EOF), ou não é '}', lance a exceção
                 throw new SyntacticException("Expected '}', found " +
@@ -66,13 +65,15 @@ public class Parser {
 
     public void comando() throws Exception {
         if (token.getType() == TokenType.RESERVED_WORD_LET) {
+            token = scanner.nextToken();
             declaracao();
         } else if (token.getType() == TokenType.IDENTIFIER) {
             //atribuicao();
         } else if (token.getType() == TokenType.RESERVED_WORD_READ) {
             leitura();
         } else if (token.getType() == TokenType.RESERVED_WORD_PRINT) {
-            //escrita();
+            token = scanner.nextToken();
+            escrita();
         } else if (token.getType() == TokenType.RESERVED_WORD_IF) {
             //condicional();
         } else if (token.getType() == TokenType.RESERVED_WORD_WHILE) {
@@ -84,24 +85,24 @@ public class Parser {
     }
 
     public void declaracao() throws SyntacticException {
-        if (token.getType() == TokenType.RESERVED_WORD_LET) {
+        mutavel();
+        if (token.getType() == TokenType.IDENTIFIER) {
             token = scanner.nextToken();
-            mutavel();
-            if (token.getType() == TokenType.IDENTIFIER) {
+            if (token.getType() == TokenType.TWOPOINTS) {
                 token = scanner.nextToken();
-                if (token.getType() == TokenType.TWOPOINTS) {
+                tipo();
+                if (token.getType() == TokenType.SEMICOLON) {
                     token = scanner.nextToken();
-                    tipo();
-                    if (token.getType() == TokenType.SEMICOLON) {
-                        token = scanner.nextToken();
-                    } else {
-                        throw new SyntacticException("Expected ';', found " + token.getType() + "(" + token.getText() + ")");
-                    }
+                } else {
+                    throw new SyntacticException("Expected ';', found " + token.getType() + "(" + token.getText() + ")");
                 }
             } else {
-                throw new SyntacticException("Expected IDENTIFIER, found " + token.getType() + "(" + token.getText() + ")");
+                throw new SyntacticException("Expected ':', found " + token.getType() + "(" + token.getText() + ")");
             }
+        } else {
+            throw new SyntacticException("Expected IDENTIFIER, found " + token.getType() + "(" + token.getText() + ")");
         }
+
     }
 
     public void condicional() throws SyntacticException {
@@ -124,9 +125,12 @@ public class Parser {
         }
     }
 
-    public void tipo() {
+    public void tipo() throws SyntacticException {
         if (token != null) {
-            if (token.getType() == TokenType.IDENTIFIER) {
+            if (token.getType() == TokenType.RESERVED_WORD_INT || token.getType() == TokenType.RESERVED_WORD_FLOAT) {
+                token = scanner.nextToken();
+            } else {
+                throw new SyntacticException("Expected type INT or FLOAT, found " + token.getType() + "(" + token.getText() + ")");
             }
         }
     }
@@ -151,6 +155,39 @@ public class Parser {
             throw new SyntacticException("Expected ')', found " + token.getType() + "(" + token.getText() + ")");
         }
         token = scanner.nextToken(); // consume ')'
+    }
+
+    public void escrita() throws Exception {
+        if (token.getType() == TokenType.EXCLAMATION) {
+            token = scanner.nextToken(); // consome '!'
+            if (token.getType() == TokenType.LEFT_PARENTHESIS) {
+                token = scanner.nextToken(); // consome '('
+                if (token.getType() == TokenType.IDENTIFIER || token.getType() == TokenType.STRING) {
+                    token = scanner.nextToken(); // consome ID, ainda nao colocou CADEIA PRECISA DE AJUSTE ESSA PARTE
+                    if (token.getType() == TokenType.RIGHT_PARENTHESIS) {
+                        token = scanner.nextToken(); // consome ')'
+                        if (token.getType() == TokenType.SEMICOLON) {
+                            token = scanner.nextToken(); // consome ';'
+                        } else {
+                            throw new SyntacticException("Expected ';', found "
+                                    + token.getType() + "(" + token.getText() + ")");
+                        }
+                    } else {
+                        throw new SyntacticException("Expected ')', found "
+                                + token.getType() + "(" + token.getText() + ")");
+                    }
+                } else {
+                    throw new SyntacticException("Expected IDENTIFIER, found "
+                            + token.getType() + "(" + token.getText() + ")");
+                }
+            } else {
+                throw new SyntacticException("Expected '(', found "
+                        + token.getType() + "(" + token.getText() + ")");
+            }
+        } else {
+            throw new SyntacticException("Expected '!', found "
+                    + token.getType() + "(" + token.getText() + ")");
+        }
     }
 
 //    public void E() throws Exception {
