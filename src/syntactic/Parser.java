@@ -108,10 +108,10 @@ public class Parser {
 
     }
 
-    public void atribuicao() throws SyntacticException {
+    public void atribuicao() throws Exception {
 
         if (token.getType() == TokenType.ASSIGNMENT) {
-            //expressaoAritmetica();
+            expressaoAritmetica();
             if (token.getType() == TokenType.SEMICOLON) {
                 token = scanner.nextToken();
             } else {
@@ -248,7 +248,14 @@ public class Parser {
     }
 
     public void termo_() throws Exception {
-
+        if (token != null) {
+            if (token.getText().equals("*") || token.getText().equals("/")) {
+                fator();
+                termo_();
+            } else {
+                throw new SyntacticException("Expected '*' or '/', found " + token.getType() + "(" + token.getText() + ")");
+            }
+        }
     }
 
     public void expressaoRelacional() throws Exception { //IMCOMPLETA 🔴🔴🔴🔴🔴
