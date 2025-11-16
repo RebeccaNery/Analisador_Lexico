@@ -21,8 +21,8 @@ public class Scanner {
 
     static {
         reservedWords = new HashMap<>();
-        reservedWords.put("int", TokenType.RESERVED_WORD);
-        reservedWords.put("float", TokenType.RESERVED_WORD);
+        reservedWords.put("i32", TokenType.RESERVED_WORD_INT);
+        reservedWords.put("f64", TokenType.RESERVED_WORD_FLOAT);
         reservedWords.put("print", TokenType.RESERVED_WORD_PRINT);
         reservedWords.put("if", TokenType.RESERVED_WORD_IF);
         reservedWords.put("else", TokenType.RESERVED_WORD);
