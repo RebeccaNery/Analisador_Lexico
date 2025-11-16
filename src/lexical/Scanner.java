@@ -50,7 +50,7 @@ public class Scanner {
         char currentChar;
         String content = "";
         state = 0;
-        System.out.println("\n--- Chamando nextToken() ---");
+        //System.out.println("\n--- Chamando nextToken() ---");
 
         while (true) {
 
@@ -91,7 +91,7 @@ public class Scanner {
                     } else if (isParenthesis(currentChar)) {
                         content += currentChar;
                         if (currentChar == '(') {
-                            System.out.println("DEBUG: Retornando TOKEN: PARÊNTESIS ESQUERDO | Valor: " + content);
+                            //System.out.println("DEBUG: Retornando TOKEN: PARÊNTESIS ESQUERDO | Valor: " + content);
                             return new Token(TokenType.LEFT_PARENTHESIS, content);
                         } else {
                             //System.out.println("DEBUG: Retornando TOKEN: PARÊNTESIS DIREITO | Valor: " + content);
@@ -102,6 +102,17 @@ public class Scanner {
                         content += currentChar;
                         state = 3;
                         //System.out.println("DEBUG: Encontrei um ponto! Transição para o estado 3 | Valor: " + currentChar);
+                    } else if (currentChar == ';') {
+                        return new Token(TokenType.SEMICOLON, content);
+
+                    } else if (currentChar == ':') {
+                        return new Token(TokenType.TWOPOINTS, content);
+
+                    } else if (currentChar == '{') {
+                        return new Token(TokenType.LEFT_BRACE, content);
+
+                    } else if (currentChar == '}') {
+                        return new Token(TokenType.RIGHT_BRACE, content);
                     } else {
                         //System.out.println("DEBUG: Caractere inválido: " + currentChar);
                         String errorMessage = String.format(
@@ -243,14 +254,14 @@ public class Scanner {
                     }
                     if (currentChar == '/') {
                         content += currentChar;
-                        System.out.println("DEBUG: Fim do comentário multilinha! | Valor: " + content);
+                        //System.out.println("DEBUG: Fim do comentário multilinha! | Valor: " + content);
                         state = 0;
                         content = "";
                         continue;
                     } else {
                         state = 7;
                         content += currentChar;
-                        System.out.println("DEBUG: Estado 8 -> voltando pro Estado 7 | Dentro do comentário multilinha! | Valor: " + content);
+                        //System.out.println("DEBUG: Estado 8 -> voltando pro Estado 7 | Dentro do comentário multilinha! | Valor: " + content);
                     }
                     break;
             }//switch

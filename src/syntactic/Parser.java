@@ -37,18 +37,21 @@ public class Parser {
         } else {
             throw new SyntacticException("Expected 'fn', found " + token.getType() + "(" + token.getText() + ")");
         }
-
     }
 
     public void bloco() throws Exception {
         if (token.getType() == TokenType.LEFT_BRACE) {
             token = scanner.nextToken();
             listaComandos();
-            if (token.getType() == TokenType.RIGHT_BRACE) {
-                token = scanner.nextToken();
-            } else {
-                throw new SyntacticException("Expected '}', found " + token.getType() + "(" + token.getText() + ")");
+            // ** ADICIONE ESTA VERIFICAÇÃO **
+            if (token == null || token.getType() != TokenType.RIGHT_BRACE) {
+                // Se token é null (EOF), ou não é '}', lance a exceção
+                throw new SyntacticException("Expected '}', found " +
+                        (token == null ? "EOF" : token.getType() + "(" + token.getText() + ")")
+                );
             }
+            // Se chegamos aqui, é o '}'. Consuma e avance.
+            token = scanner.nextToken();
         } else {
             throw new SyntacticException("Expected '{', found " + token.getType() + "(" + token.getText() + ")");
         }
@@ -100,20 +103,18 @@ public class Parser {
             }
         }
     }
-    public void condicional() throws SyntacticException{
-        if(token !=null) {
+
+    public void condicional() throws SyntacticException {
+        if (token != null) {
             if (token.getType() == TokenType.RESERVED_WORD_IF) {
                 token = scanner.nextToken();
-                expressaoRelacional();
-                bloco();
-                condicional_();
+                //expressaoRelacional();
+                //bloco();
+                //condicional_();
 
             }
         }
     }
-
-
-
 
     public void mutavel() {
         if (token != null) {
