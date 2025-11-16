@@ -25,7 +25,7 @@ public class Scanner {
         reservedWords.put("f64", TokenType.RESERVED_WORD_FLOAT);
         reservedWords.put("print", TokenType.RESERVED_WORD_PRINT);
         reservedWords.put("if", TokenType.RESERVED_WORD_IF);
-        reservedWords.put("else", TokenType.RESERVED_WORD);
+        reservedWords.put("else", TokenType.RESERVED_WORD_ELSE);
         reservedWords.put("fn", TokenType.RESERVED_WORD_FN);
         reservedWords.put("main", TokenType.RESERVED_WORD_MAIN);
         reservedWords.put("let", TokenType.RESERVED_WORD_LET);

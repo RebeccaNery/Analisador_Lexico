@@ -68,7 +68,7 @@ public class Parser {
             token = scanner.nextToken();
             declaracao();
         } else if (token.getType() == TokenType.IDENTIFIER) {
-            //atribuicao();
+            atribuicao();
         } else if (token.getType() == TokenType.RESERVED_WORD_READ) {
             token = scanner.nextToken();
             leitura();
@@ -76,9 +76,11 @@ public class Parser {
             token = scanner.nextToken();
             escrita();
         } else if (token.getType() == TokenType.RESERVED_WORD_IF) {
-            //condicional();
+            token = scanner.nextToken();
+            condicional();
         } else if (token.getType() == TokenType.RESERVED_WORD_WHILE) {
-            //repeticao();
+            token = scanner.nextToken();
+            repeticao();
         } else if (token.getType() == TokenType.LEFT_BRACE) {
             bloco();
         }
@@ -106,15 +108,35 @@ public class Parser {
 
     }
 
-    public void condicional() throws SyntacticException {
-        if (token != null) {
-            if (token.getType() == TokenType.RESERVED_WORD_IF) {
-                token = scanner.nextToken();
-                //expressaoRelacional();
-                //bloco();
-                //condicional_();
+    public void atribuicao() throws SyntacticException {
 
+        if (token.getType() == TokenType.ASSIGNMENT) {
+            //expressaoAritmetica();
+            if (token.getType() == TokenType.SEMICOLON) {
+                token = scanner.nextToken();
+            } else {
+                throw new SyntacticException("Expected ';', found " + token.getType() + "(" + token.getText() + ")");
             }
+        } else {
+            throw new SyntacticException("Expected '=', found " + token.getType() + "(" + token.getText() + ")");
+        }
+
+    }
+
+    public void condicional() throws Exception {
+        if (token != null) {
+            //expressaoRelacional();
+            bloco();
+            condicional_();
+        }
+    }
+
+    public void condicional_() throws Exception {
+        if (token.getType() == TokenType.RESERVED_WORD_ELSE) {
+            token = scanner.nextToken();
+            bloco();
+        } else {
+            throw new SyntacticException("Expected 'else', found " + token.getType() + "(" + token.getText() + ")");
         }
     }
 
@@ -193,6 +215,11 @@ public class Parser {
             throw new SyntacticException("Expected '!', found "
                     + token.getType() + "(" + token.getText() + ")");
         }
+    }
+
+    public void repeticao() throws Exception {
+        //expressaoRelacional();
+        bloco();
     }
 
 //    public void E() throws Exception {
