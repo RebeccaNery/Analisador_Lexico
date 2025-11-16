@@ -70,7 +70,7 @@ public class Parser {
         } else if (token.getType() == TokenType.IDENTIFIER) {
             //atribuicao();
         } else if (token.getType() == TokenType.RESERVED_WORD_READ) {
-            //leitura();
+            leitura();
         } else if (token.getType() == TokenType.RESERVED_WORD_PRINT) {
             //escrita();
         } else if (token.getType() == TokenType.RESERVED_WORD_IF) {
@@ -129,6 +129,28 @@ public class Parser {
             if (token.getType() == TokenType.IDENTIFIER) {
             }
         }
+    }
+
+    public void leitura() throws Exception {
+        if (token.getType() != TokenType.RESERVED_WORD_READ) {
+            throw new SyntacticException("Expected 'read', found " + token.getType() + "(" + token.getText() + ")");
+        }
+        token = scanner.nextToken(); //consome read e vai para a proxima se tiver
+
+        if (token.getType() != TokenType.LEFT_PARENTHESIS) {
+            throw new SyntacticException("Expected '(', found " + token.getType() + "(" + token.getText() + ")");
+        }
+        token = scanner.nextToken(); // consume '('
+
+        if (token.getType() != TokenType.IDENTIFIER) {
+            throw new SyntacticException("Expected IDENTIFIER, found " + token.getType() + "(" + token.getText() + ")");
+        }
+        token = scanner.nextToken(); // consume ID
+
+        if (token.getType() != TokenType.RIGHT_PARENTHESIS) {
+            throw new SyntacticException("Expected ')', found " + token.getType() + "(" + token.getText() + ")");
+        }
+        token = scanner.nextToken(); // consume ')'
     }
 
 //    public void E() throws Exception {
