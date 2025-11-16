@@ -222,6 +222,46 @@ public class Parser {
         bloco();
     }
 
+    public void expressaoAritmetica() throws Exception {
+        termo();
+        expressaoAritmetica_();
+    }
+
+    public void expressaoAritmetica_() throws Exception {
+
+    }
+
+    public void termo() throws Exception {
+        fator();
+        termo_();
+    }
+
+    public void fator() throws Exception {
+
+    }
+
+    public void termo_() throws Exception {
+
+    }
+
+    public void expressaoRelacional() throws Exception { //IMCOMPLETA 🔴🔴🔴🔴🔴
+        expressaoAritmetica();
+        if (token.getType() == TokenType.REL_OPERATOR) {
+            token = scanner.nextToken();
+            expressaoAritmetica();
+        } else {
+            throw new SyntacticException("Expected REL_OPERATOR, found " + token.getType() + "(" + token.getText() + ")");
+        }
+    }
+
+    public void termoRelacional() throws Exception {
+
+    }
+
+    public void operadorLogico() throws Exception {
+
+    }
+
 //    public void E() throws Exception {
 //        T();
 //        El();
