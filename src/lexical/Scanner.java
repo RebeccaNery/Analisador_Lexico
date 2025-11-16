@@ -105,7 +105,7 @@ public class Scanner {
                         throw new RuntimeException(errorMessage);
                     }
                     break;
-                case 1: //IDENTIFIER
+                case 1: //IDENTIFIER e RESERVED_WORD
                     if (isLetter(currentChar) || isDigit(currentChar) || isUnderline(currentChar)) {
                         content += currentChar;
                         state = 1;

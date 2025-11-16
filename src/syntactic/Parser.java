@@ -15,15 +15,15 @@ public class Parser {
         token = this.scanner.nextToken();
     }
 
-    public void E() throws Exception {
+    public void programa() throws Exception {
         T();
-        El();
+        bloco();
     }
 
-    public void El() throws Exception {
+    public void bloco() throws Exception {
         if (token != null) {
             OP();
-            T();
+            listaComandos();
             El();
         }
     }
@@ -46,6 +46,38 @@ public class Parser {
             throw new SyntacticException("Expected MATH_OPERATOR, found " + token.getType() + "(" + token.getText() + ")");
         }
     }
+
+//    public void E() throws Exception {
+//        T();
+//        El();
+//    }
+//
+//    public void El() throws Exception {
+//        if (token != null) {
+//            OP();
+//            T();
+//            El();
+//        }
+//    }
+//
+//    public void T() throws Exception, SyntacticException {
+//        if (token == null) {
+//            return;
+//        } else if (token.getType() == TokenType.IDENTIFIER || token.getType() == TokenType.NUMBER) {
+//            token = scanner.nextToken();
+//        } else {
+//            throw new SyntacticException("Expected ID or Number, found " + token.getType() + "(" + token.getText() + ")");
+//        }
+//
+//    }
+//
+//    public void OP() throws Exception, SyntacticException {
+//        if (token.getType() == TokenType.MATH_OPERATOR) {
+//            token = scanner.nextToken();
+//        } else {
+//            throw new SyntacticException("Expected MATH_OPERATOR, found " + token.getType() + "(" + token.getText() + ")");
+//        }
+//    }
 
 
 }
