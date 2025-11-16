@@ -244,7 +244,18 @@ public class Parser {
     }
 
     public void fator() throws Exception {
-
+        if (token.getType() == TokenType.NUMBER || token.getType() == TokenType.IDENTIFIER) {
+            token = scanner.nextToken();
+        } else if (token.getType() == TokenType.LEFT_PARENTHESIS) {
+            expressaoAritmetica();
+            if (token.getType() == TokenType.RIGHT_PARENTHESIS) {
+                token = scanner.nextToken();
+            } else {
+                throw new SyntacticException("Expected ')', found " + token.getType() + "(" + token.getText() + ")");
+            }
+        } else {
+            throw new SyntacticException("Expected NUMBER or IDENTIFIER, found " + token.getType() + "(" + token.getText() + ")");
+        }
     }
 
     public void termo_() throws Exception {
