@@ -23,9 +23,15 @@ public class Scanner {
         reservedWords = new HashMap<>();
         reservedWords.put("int", TokenType.RESERVED_WORD);
         reservedWords.put("float", TokenType.RESERVED_WORD);
-        reservedWords.put("print", TokenType.RESERVED_WORD);
-        reservedWords.put("if", TokenType.RESERVED_WORD);
+        reservedWords.put("print", TokenType.RESERVED_WORD_PRINT);
+        reservedWords.put("if", TokenType.RESERVED_WORD_IF);
         reservedWords.put("else", TokenType.RESERVED_WORD);
+        reservedWords.put("fn", TokenType.RESERVED_WORD_FN);
+        reservedWords.put("main", TokenType.RESERVED_WORD_MAIN);
+        reservedWords.put("let", TokenType.RESERVED_WORD_LET);
+        reservedWords.put("mut", TokenType.RESERVED_WORD_MUT);
+        reservedWords.put("read", TokenType.RESERVED_WORD_READ);
+        reservedWords.put("while", TokenType.RESERVED_WORD_WHILE);
     }
 
     public Scanner(String filename) {

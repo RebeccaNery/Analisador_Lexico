@@ -16,15 +16,101 @@ public class Parser {
     }
 
     public void programa() throws Exception {
-        T();
-        bloco();
+        if (token.getType() == TokenType.RESERVED_WORD_FN) {
+            token = scanner.nextToken();
+            if (token.getType() == TokenType.RESERVED_WORD_MAIN) {
+                token = scanner.nextToken();
+                if (token.getType() == TokenType.LEFT_PARENTHESIS) {
+                    token = scanner.nextToken();
+                    if (token.getType() == TokenType.RIGHT_PARENTHESIS) {
+                        token = scanner.nextToken();
+                        bloco();
+                    } else {
+                        throw new SyntacticException("Expected ')', found " + token.getType() + "(" + token.getText() + ")");
+                    }
+                } else {
+                    throw new SyntacticException("Expected '(', found " + token.getType() + "(" + token.getText() + ")");
+                }
+            } else {
+                throw new SyntacticException("Expected 'main', found " + token.getType() + "(" + token.getText() + ")");
+            }
+        } else {
+            throw new SyntacticException("Expected 'fn', found " + token.getType() + "(" + token.getText() + ")");
+        }
+
     }
 
     public void bloco() throws Exception {
-        if (token != null) {
-            OP();
+        if (token.getType() == TokenType.LEFT_BRACE) {
+            token = scanner.nextToken();
             listaComandos();
-            El();
+            if (token.getType() == TokenType.RIGHT_BRACE) {
+                token = scanner.nextToken();
+            } else {
+                throw new SyntacticException("Expected '}', found " + token.getType() + "(" + token.getText() + ")");
+            }
+        } else {
+            throw new SyntacticException("Expected '{', found " + token.getType() + "(" + token.getText() + ")");
+        }
+    }
+
+    public void listaComandos() throws Exception {
+        comando();
+        listaComandos();
+    }
+
+    public void comando() throws Exception {
+        if (token.getType() == TokenType.RESERVED_WORD_LET) {
+            declaracao();
+        } else if (token.getType() == TokenType.IDENTIFIER) {
+            atribuicao();
+        } else if (token.getType() == TokenType.RESERVED_WORD_READ) {
+            leitura();
+        } else if (token.getType() == TokenType.RESERVED_WORD_PRINT) {
+            escrita();
+        } else if (token.getType() == TokenType.RESERVED_WORD_IF) {
+            condicional();
+        } else if (token.getType() == TokenType.RESERVED_WORD_WHILE) {
+            repeticao();
+        } else if (token.getType() == TokenType.LEFT_BRACE) {
+            bloco();
+        }
+        
+    }
+
+    public void declaracao() throws SyntacticException {
+        if (token.getType() == TokenType.RESERVED_WORD_LET) {
+            token = scanner.nextToken();
+            mutavel();
+            if (token.getType() == TokenType.IDENTIFIER) {
+                token = scanner.nextToken();
+                if (token.getType() == TokenType.TWOPOINTS) {
+                    token = scanner.nextToken();
+                    tipo();
+                    if (token.getType() == TokenType.SEMICOLON) {
+                        token = scanner.nextToken();
+                    } else {
+                        throw new SyntacticException("Expected ';', found " + token.getType() + "(" + token.getText() + ")");
+                    }
+                }
+            } else {
+                throw new SyntacticException("Expected IDENTIFIER, found " + token.getType() + "(" + token.getText() + ")");
+            }
+        }
+    }
+
+    public void mutavel() {
+        if (token != null) {
+            if (token.getType() == TokenType.RESERVED_WORD_MUT) {
+                token = scanner.nextToken();
+            }
+        }
+    }
+
+    public void tipo() {
+        if (token != null) {
+            if (token.getType() == TokenType.IDENTIFIER) {
+            }
         }
     }
 
