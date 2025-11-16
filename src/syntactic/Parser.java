@@ -228,7 +228,14 @@ public class Parser {
     }
 
     public void expressaoAritmetica_() throws Exception {
-
+        if (token != null) {
+            if (token.getText().equals("+") || token.getText().equals("-")) {
+                termo();
+                expressaoAritmetica_();
+            } else {
+                throw new SyntacticException("Expected '+' or '-', found " + token.getType() + "(" + token.getText() + ")");
+            }
+        }
     }
 
     public void termo() throws Exception {
