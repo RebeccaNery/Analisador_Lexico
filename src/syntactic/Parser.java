@@ -131,25 +131,6 @@ public class Parser {
         }
     }
 
-    public void T() throws Exception, SyntacticException {
-        if (token == null) {
-            return;
-        } else if (token.getType() == TokenType.IDENTIFIER || token.getType() == TokenType.NUMBER) {
-            token = scanner.nextToken();
-        } else {
-            throw new SyntacticException("Expected ID or Number, found " + token.getType() + "(" + token.getText() + ")");
-        }
-
-    }
-
-    public void OP() throws Exception, SyntacticException {
-        if (token.getType() == TokenType.MATH_OPERATOR) {
-            token = scanner.nextToken();
-        } else {
-            throw new SyntacticException("Expected MATH_OPERATOR, found " + token.getType() + "(" + token.getText() + ")");
-        }
-    }
-
 //    public void E() throws Exception {
 //        T();
 //        El();
