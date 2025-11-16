@@ -56,7 +56,9 @@ public class Parser {
 
     public void listaComandos() throws Exception {
         comando();
-        listaComandos();
+        if (token != null && token.getType() != TokenType.RIGHT_BRACE) {
+            listaComandos();
+        }
     }
 
     public void comando() throws Exception {
@@ -75,7 +77,7 @@ public class Parser {
         } else if (token.getType() == TokenType.LEFT_BRACE) {
             bloco();
         }
-        
+
     }
 
     public void declaracao() throws SyntacticException {
