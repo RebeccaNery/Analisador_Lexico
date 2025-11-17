@@ -102,6 +102,9 @@ public class Scanner {
                         content += currentChar;
                         state = 3;
                         //System.out.println("DEBUG: Encontrei um ponto! Transição para o estado 3 | Valor: " + currentChar);
+                    } else if (isLogicOperator(currentChar)) {
+                        content += currentChar;
+                        state = 10;
                     } else if (currentChar == ';') {
                         return new Token(TokenType.SEMICOLON, content);
 
@@ -113,8 +116,6 @@ public class Scanner {
 
                     } else if (currentChar == '}') {
                         return new Token(TokenType.RIGHT_BRACE, content);
-                    } else if (currentChar == '!') {
-                        return new Token(TokenType.EXCLAMATION, content);
                     } else if (currentChar == '"') {
                         content += currentChar;
                         state = 9;
@@ -194,6 +195,8 @@ public class Scanner {
                         }
                         if (content.equals("=")) {
                             return new Token(TokenType.ASSIGNMENT, content);
+                        } else if (content.equals("!")) {
+                            return new Token(TokenType.EXCLAMATION, content);
                         } else {
                             return new Token(TokenType.REL_OPERATOR, content);
                         }
@@ -284,6 +287,25 @@ public class Scanner {
                         state = 9;
                     }
                     break;
+                case 10:
+                    if (currentChar == '&' || currentChar == '|') {
+                        content += currentChar;
+                        if (content.equals("&&") || content.equals("||")) {
+                            return new Token(TokenType.LOGIC_OPERATOR, content);
+                        } else {
+                            String errorMessage = String.format(
+                                    "Lexical Error on line %d, column %d: Invalid logic operator '%s'",
+                                    errorLine, errorColumn, content
+                            );
+                            throw new RuntimeException(errorMessage);
+                        }
+                    } else {
+                        String errorMessage = String.format(
+                                "Lexical Error on line %d, column %d: Incomplete logic operator",
+                                errorLine, errorColumn
+                        );
+                        throw new RuntimeException(errorMessage);
+                    }
             }//switch
         }
     }
@@ -311,6 +333,10 @@ public class Scanner {
 
     private boolean isRelOperator(char c) {
         return c == '>' || c == '<' || c == '=' || c == '!';
+    }
+
+    private boolean isLogicOperator(char c) {
+        return c == '&' || c == '|';
     }
 
     private boolean isParenthesis(char c) {

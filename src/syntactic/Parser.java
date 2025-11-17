@@ -277,6 +277,7 @@ public class Parser {
         } else {
             throw new SyntacticException("Expected REL_OPERATOR, found " + token.getType() + "(" + token.getText() + ")");
         }
+
     }
 
     public void termoRelacional() throws Exception {
@@ -284,7 +285,11 @@ public class Parser {
     }
 
     public void operadorLogico() throws Exception {
-
+        if (token.getType() == TokenType.LOGIC_OPERATOR || token.getType() == TokenType.EXCLAMATION) {
+            token = scanner.nextToken();
+        } else {
+            throw new SyntacticException("Expected LOGIC_OPERATOR, found " + token.getType() + "(" + token.getText() + ")");
+        }
     }
 
 //    public void E() throws Exception {
