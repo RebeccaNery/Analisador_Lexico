@@ -68,6 +68,7 @@ public class Parser {
             token = scanner.nextToken();
             declaracao();
         } else if (token.getType() == TokenType.IDENTIFIER) {
+            token = scanner.nextToken();
             atribuicao();
         } else if (token.getType() == TokenType.RESERVED_WORD_READ) {
             token = scanner.nextToken();
@@ -82,6 +83,7 @@ public class Parser {
             token = scanner.nextToken();
             repeticao();
         } else if (token.getType() == TokenType.LEFT_BRACE) {
+            token = scanner.nextToken();
             bloco();
         }
 
@@ -111,6 +113,7 @@ public class Parser {
     public void atribuicao() throws Exception {
 
         if (token.getType() == TokenType.ASSIGNMENT) {
+            token = scanner.nextToken();
             expressaoAritmetica();
             if (token.getType() == TokenType.SEMICOLON) {
                 token = scanner.nextToken();
@@ -270,18 +273,84 @@ public class Parser {
     }
 
     public void expressaoRelacional() throws Exception { //IMCOMPLETA 🔴🔴🔴🔴🔴
-        expressaoAritmetica();
-        if (token.getType() == TokenType.REL_OPERATOR) {
-            token = scanner.nextToken();
-            expressaoAritmetica();
-        } else {
-            throw new SyntacticException("Expected REL_OPERATOR, found " + token.getType() + "(" + token.getText() + ")");
+        if (token != null) {
+            expressaoRelacional_();
+            x();
+
         }
+
+        //        if (token.getType() == TokenType.LEFT_PARENTHESIS) {
+//            token = scanner.nextToken();
+//            if (token.getType() == TokenType.NUMBER || token.getType() == TokenType.IDENTIFIER) {
+//                expressaoAritmetica();
+//            }else{
+//                expressaoRelacional();
+//            }
+//
+//        }
+//
+//        if (token.getType() == TokenType.NUMBER || token.getType() == TokenType.IDENTIFIER) {
+//            token = scanner.nextToken();
+//        } else if (token.getType() == TokenType.LEFT_PARENTHESIS) {
+//            if (token.getType() == )
+//        }
+//        expressaoAritmetica();
+//        if (token.getType() == TokenType.REL_OPERATOR) {
+//            token = scanner.nextToken();
+//            expressaoAritmetica();
+//        } else {
+//            throw new SyntacticException("Expected REL_OPERATOR, found " + token.getType() + "(" + token.getText() + ")");
+//        }
 
     }
 
-    public void termoRelacional() throws Exception {
+    private void x() throws Exception {
+        if (token.getType() == TokenType.LEFT_PARENTHESIS) {
+            expressaoRelacional();
+            if (token.getType() == TokenType.RIGHT_PARENTHESIS) {
+                token = scanner.nextToken();
+            } else {
+                throw new SyntacticException("Expected ')', found " + token.getType() + "(" + token.getText() + ")");
+            }
+        } else {
+            expressaoAritmetica();
+            if (token.getType() == TokenType.REL_OPERATOR) {
+                token = scanner.nextToken();
+                expressaoAritmetica();
+            } else {
+                throw new SyntacticException("Expected REL_OPERATOR, found " + token.getType() + "(" + token.getText() + ")");
+            }
+        }
+    }
 
+    public void expressaoRelacional_() throws Exception {
+        if (token != null) {
+            operadorLogico();
+            termoRelacional();
+            expressaoRelacional_();
+        }
+    }
+
+    public void termoRelacional() throws Exception {
+        if (token.getType() == TokenType.LEFT_PARENTHESIS) {
+            token = scanner.nextToken(); // consome '('
+            expressaoRelacional();
+            if (token.getType() == TokenType.RIGHT_PARENTHESIS) {
+                token = scanner.nextToken(); // consome ')'
+            } else {
+                throw new SyntacticException("Expected ')', found "
+                        + token.getType() + "(" + token.getText() + ")");
+            }
+        } else {
+            expressaoAritmetica();
+            if (token.getType() == TokenType.REL_OPERATOR) {
+                token = scanner.nextToken(); // consome o operador relacional
+            } else {
+                throw new SyntacticException("Expected RELATIONAL_OPERATOR, found "
+                        + token.getType() + "(" + token.getText() + ")");
+            }
+            expressaoAritmetica();
+        }
     }
 
     public void operadorLogico() throws Exception {

@@ -5,6 +5,8 @@ import util.TokenType;
 public class Token {
     private TokenType type;
     private String text;
+    private int line;
+    private int column;
 
     public Token(TokenType type, String text) {
         super();
@@ -28,9 +30,17 @@ public class Token {
         this.text = text;
     }
 
+    public int getLine() {
+        return line;
+    }
+
+    public int getColumn() {
+        return column;
+    }
+
     @Override
     public String toString() {
-        return "Token [type=" + type + ", text='" + text + "']";
+        return "Token [type=" + type + ", text='" + text + "'" + ", line=" + line + ", column=" + column + "]";
     }
 
 }

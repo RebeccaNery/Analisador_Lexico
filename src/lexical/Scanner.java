@@ -116,6 +116,8 @@ public class Scanner {
 
                     } else if (currentChar == '}') {
                         return new Token(TokenType.RIGHT_BRACE, content);
+                    } else if (currentChar == '%') {
+                        return new Token(TokenType.PERCENTAGE, content);
                     } else if (currentChar == '"') {
                         content += currentChar;
                         state = 9;
