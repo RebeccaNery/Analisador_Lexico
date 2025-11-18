@@ -128,7 +128,7 @@ public class Parser {
 
     public void condicional() throws Exception {
         if (token != null) {
-            //expressaoRelacional();
+            expressaoRelacional();
             bloco();
             condicional_();
         }
@@ -232,6 +232,7 @@ public class Parser {
     public void expressaoAritmetica_() throws Exception {
         if (token != null) {
             if (token.getText().equals("+") || token.getText().equals("-")) {
+                token = scanner.nextToken();
                 termo();
                 expressaoAritmetica_();
             }
@@ -261,7 +262,7 @@ public class Parser {
 
     public void termo_() throws Exception {
         if (token != null) {
-            if (token.getText().equals("*") || token.getText().equals("/")) {
+            if (token.getText().equals("*") || token.getText().equals("/") || token.getType() == TokenType.PERCENTAGE) {
                 token = scanner.nextToken();
                 fator();
                 termo_();
@@ -280,7 +281,6 @@ public class Parser {
                 throw new SyntacticException("Expected ')', found " + token.getType() + "(" + token.getText() + ")");
             }
         } else {
-            token = scanner.nextToken();
             expressaoAritmetica();
             if (token.getType() == TokenType.REL_OPERATOR) {
                 token = scanner.nextToken();
@@ -294,9 +294,11 @@ public class Parser {
 
     public void expressaoRelacional_() throws Exception {
         if (token != null) {
-            operadorLogico();
-            termoRelacional();
-            expressaoRelacional_();
+            if (token.getType() == TokenType.LOGIC_OPERATOR || token.getType() == TokenType.EXCLAMATION) {
+                operadorLogico();
+                termoRelacional();
+                expressaoRelacional_();
+            }
         }
     }
 
