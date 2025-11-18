@@ -7,9 +7,24 @@ fn main() {
     let mut contador:i32;
 
 multiplos = 0;
+contador = 0;
 
+read(n);
 
+while n >= 0 {
+        contador = contador + 1;
 
+        if (n % 3) == 0 && n != 0 {
+            multiplos = multiplos + 1;
+        } else {
+            print!("Nao eh multiplo de 3!");
+        }
 
+        read(n);
+    }
 
+    print!("Quantidade de multiplos de 3:");
+    print!(multiplos);
+    print!("Quantidade total de numeros:");
+    print!(contador);
 }
