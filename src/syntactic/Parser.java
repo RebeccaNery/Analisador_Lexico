@@ -270,26 +270,9 @@ public class Parser {
         }
     }
 
-    public void expressaoRelacional() throws Exception { //IMCOMPLETA 🔴🔴🔴🔴🔴
-        if (token.getType() == TokenType.LEFT_PARENTHESIS) {
-            token = scanner.nextToken();
-            expressaoRelacional();
-            if (token.getType() == TokenType.RIGHT_PARENTHESIS) {
-                token = scanner.nextToken();
-                expressaoRelacional_();
-            } else {
-                throw new SyntacticException("Expected ')', found " + token.getType() + "(" + token.getText() + ")");
-            }
-        } else {
-            expressaoAritmetica();
-            if (token.getType() == TokenType.REL_OPERATOR) {
-                token = scanner.nextToken();
-                expressaoAritmetica();
-                expressaoRelacional_();
-            } else {
-                throw new SyntacticException("Expected REL_OPERATOR, found " + token.getType() + "(" + token.getText() + ")");
-            }
-        }
+    public void expressaoRelacional() throws Exception {
+        termoRelacional();
+        expressaoRelacional_();
     }
 
     public void expressaoRelacional_() throws Exception {
@@ -303,25 +286,15 @@ public class Parser {
     }
 
     public void termoRelacional() throws Exception {
-        if (token.getType() == TokenType.LEFT_PARENTHESIS) {
-            token = scanner.nextToken(); // consome '('
-            expressaoRelacional();
-            if (token.getType() == TokenType.RIGHT_PARENTHESIS) {
-                token = scanner.nextToken(); // consome ')'
-            } else {
-                throw new SyntacticException("Expected ')', found "
-                        + token.getType() + "(" + token.getText() + ")");
-            }
+
+        expressaoAritmetica();
+        if (token.getType() == TokenType.REL_OPERATOR) {
+            token = scanner.nextToken(); // consome o operador relacional
         } else {
-            expressaoAritmetica();
-            if (token.getType() == TokenType.REL_OPERATOR) {
-                token = scanner.nextToken(); // consome o operador relacional
-            } else {
-                throw new SyntacticException("Expected RELATIONAL_OPERATOR, found "
-                        + token.getType() + "(" + token.getText() + ")");
-            }
-            expressaoAritmetica();
+            throw new SyntacticException("Expected RELATIONAL_OPERATOR, found "
+                    + token.getType() + "(" + token.getText() + ")");
         }
+        expressaoAritmetica();
     }
 
     public void operadorLogico() throws Exception {
@@ -331,38 +304,5 @@ public class Parser {
             throw new SyntacticException("Expected LOGIC_OPERATOR, found " + token.getType() + "(" + token.getText() + ")");
         }
     }
-
-//    public void E() throws Exception {
-//        T();
-//        El();
-//    }
-//
-//    public void El() throws Exception {
-//        if (token != null) {
-//            OP();
-//            T();
-//            El();
-//        }
-//    }
-//
-//    public void T() throws Exception, SyntacticException {
-//        if (token == null) {
-//            return;
-//        } else if (token.getType() == TokenType.IDENTIFIER || token.getType() == TokenType.NUMBER) {
-//            token = scanner.nextToken();
-//        } else {
-//            throw new SyntacticException("Expected ID or Number, found " + token.getType() + "(" + token.getText() + ")");
-//        }
-//
-//    }
-//
-//    public void OP() throws Exception, SyntacticException {
-//        if (token.getType() == TokenType.MATH_OPERATOR) {
-//            token = scanner.nextToken();
-//        } else {
-//            throw new SyntacticException("Expected MATH_OPERATOR, found " + token.getType() + "(" + token.getText() + ")");
-//        }
-//    }
-
 
 }
